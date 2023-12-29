@@ -10,7 +10,7 @@ import { Low } from 'lowdb'
 import { JSONFile } from 'lowdb/node'
 
 import shortVersions from '#src/versions/middleware/short-versions.js'
-import contextualize from '../../../middleware/context.js'
+import contextualize from '#src/frame/middleware/context/context.js'
 import features from '#src/versions/middleware/features.js'
 import getRedirect from '#src/redirects/lib/get-redirect.js'
 import warmServer from '#src/frame/lib/warm-server.js'
@@ -578,7 +578,9 @@ async function processPermalink(core, permalink, page, pageMap, redirects, opts,
   try {
     html = await renderInnerHTML(page, permalink)
   } catch (error) {
-    console.warn(`The error happened trying to render ${page.relativePath}`)
+    console.warn(
+      `The error happened trying to render ${page.relativePath} (permalink: ${permalink.href})`,
+    )
     throw error
   }
   const $ = cheerio.load(html, { xmlMode: true })
@@ -943,7 +945,7 @@ async function innerFetch(core, url, config = {}) {
   //   3. ~4000ms
   //
   // ...if the limit we set is 3.
-  // Our own timeout, in ./middleware/timeout.js defaults to 10 seconds.
+  // Our own timeout, in #src/frame/middleware/timeout.js defaults to 10 seconds.
   // So there's no point in trying more attempts than 3 because it would
   // just timeout on the 10s. (i.e. 1000 + 2000 + 4000 + 8000 > 10,000)
   const retry = {

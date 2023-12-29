@@ -47,7 +47,8 @@ shortTitle: Manage secret alerts
    {% data reusables.secret-scanning.validity-check-partner-patterns-beta %}
 
    {% data reusables.secret-scanning.validity-check-partner-patterns-enabled %}
-{% endif %}
+{% endif %}{% ifversion secret-scanning-bypass-filter %}
+1. Optionally, to see which alerts are the result of a user bypassing push protection, select the "Bypassed" dropdown menu, then click **True**.{% endif %}
 1. Under "{% data variables.product.prodname_secret_scanning_caps %}", click the alert you want to view.{% ifversion secret-scanning-non-provider-patterns %}
    {% note %}
 
@@ -56,11 +57,12 @@ shortTitle: Manage secret alerts
    {% endnote %}
    {% endif %}{% ifversion secret-scanning-validity-check-partner-patterns %}
 1. Optionally, to perform a validity check on the token, on the top right-hand side of the alert, click {% octicon "sync" aria-hidden="true" %} **Verify secret**. For more information, see "[Validating partner patterns](#validating-partner-patterns)."
-   {% note %}
 
-   **Note:** You can only perform on-demand validity checks for patterns detected in the repository if automatic validity checks have been enabled for the repository. For more information, see "[Allowing validity checks for partner patterns in a repository](/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-security-and-analysis-settings-for-your-repository#allowing-validity-checks-for-partner-patterns-in-a-repository)."
+    {% note %}
 
-   {% endnote %}
+     **Note:** You can only perform on-demand validity checks for patterns detected in the repository if automatic validity checks have been enabled for the repository. For more information, see "[Allowing validity checks for partner patterns in a repository](/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-security-and-analysis-settings-for-your-repository#allowing-validity-checks-for-partner-patterns-in-a-repository)."
+
+     {% endnote %}
    {% endif %}{% ifversion ghes = 3.9 or ghes = 3.10 or ghes = 3.11 %}
 1. Optionally, if the leaked secret is a {% data variables.product.company_short %} token, check the validity of the secret and follow the remediation steps.
 
@@ -69,7 +71,6 @@ shortTitle: Manage secret alerts
    **Note:**  Validity check for {% data variables.product.company_short %} tokens is currently in public beta and subject to change.
 
    {% endnote %}
-
    {% data variables.product.company_short %} provides information about the validity of the secret, for {% data variables.product.company_short %} tokens only.
 
    {% data reusables.secret-scanning.validity-check-table %}{% endif %}{% ifversion secret-scanning-github-token-metadata %}
@@ -97,8 +98,8 @@ As an organization owner, or repository administrator, you need to enable the de
 
 Non-provider alerts are different from high confidence alerts. Non-provider alerts:
 
-- Are not shown in security overview.
-- Are listed in a different view from high confidence alerts. That view is called "Other".
+- Are not shown in the summary views for security overview, only in the "{% data variables.product.prodname_secret_scanning_caps %}" view.
+- Are listed in a different view from high-confidence alerts. That view is called "Other".
 - Only have the first five detected locations shown on {% data variables.product.prodname_dotcom %}.
 - Are limited in quantity to 5000 alerts per repository (this includes open and closed alerts).
 
@@ -133,6 +134,8 @@ If your repository has validity checks enabled, you can also perform an on-deman
 
 You can filter alerts for supported partner patterns by their validation status, and use the status of a leaked secret to help prioritize the secrets needing remediation steps.
 
+You can use the REST API to retrieve a list of the most recent validation status for each of your tokens. For more information, see "[AUTOTITLE](/rest/secret-scanning)" in the REST API documentation.
+
 {% data reusables.secret-scanning.validity-check-table %}
 
 For more information on which partners support validity checks, see "[Supported secrets](/code-security/secret-scanning/secret-scanning-patterns#supported-secrets)."
@@ -165,6 +168,29 @@ Tokens, like {% data variables.product.pat_generic %} and other credentials, are
 |Expired on| Date the token expired|
 |Last used on| Date the token was last used|
 |Access| Whether the token has organization access|
+
+{% endif %}
+
+{% ifversion secret-scanning-ai-generic-secret-detection %}
+
+## Viewing alerts for generic secrets detected using AI
+
+{% data reusables.secret-scanning.generic-secret-detection-ai %}
+
+When you enable AI-powered generic secret detection for your repository, {% data variables.product.prodname_secret_scanning %} will scan for unstructured secrets, such as passwords, in your source code and generate alerts.
+
+Once a potential password is identified, an alert is displayed in a separate list on the {% data variables.product.prodname_secret_scanning %} alerts page (under the **Security** tab of the repository). The separate view makes it easier for you to triage and verify the validity of the findings.
+
+To see the separate list of alerts for generic secrets, you must to toggle to "Other" on the alerts page. Each alert notes that it was detected using AI.
+
+{% data reusables.repositories.navigate-to-repo %}
+{% data reusables.repositories.sidebar-security %}
+1. In the left sidebar, under "Vulnerability alerts", click **{% data variables.product.prodname_secret_scanning_caps %}**.
+1. On the top right corner of the list of {% data variables.product.prodname_secret_scanning %} alerts, toggle to "Other".
+
+   ![Screenshot of the {% data variables.product.prodname_secret_scanning %} alert index view for a repository. A toggle, titled "Other", is highlighted in a dark orange outline.](/assets/images/help/repository/secret-scanning-ai-other-toggle.png)
+
+For more information about the feature and its limitations, see "[AUTOTITLE](/code-security/secret-scanning/about-the-detection-of-generic-secrets-with-secret-scanning)." For information on how to enable the feature for your repository, see "[AUTOTITLE](/code-security/secret-scanning/enabling-ai-powered-generic-secret-detection)."
 
 {% endif %}
 

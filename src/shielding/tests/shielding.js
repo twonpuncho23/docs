@@ -1,6 +1,6 @@
-import { SURROGATE_ENUMS } from '../../../middleware/set-fastly-surrogate-key.js'
-// import { setFastlySurrogateKey } from '../../../middleware/set-fastly-surrogate-key.js'
-import { get } from '../../../tests/helpers/e2etest.js'
+import { SURROGATE_ENUMS } from '#src/frame/middleware/set-fastly-surrogate-key.js'
+// import { setFastlySurrogateKey } from '#src/frame/middleware/set-fastly-surrogate-key.js'
+import { get } from '#src/tests/helpers/e2etest.js'
 
 describe('honeypotting', () => {
   test('any GET with survey-vote and survey-token query strings is 400', async () => {
@@ -40,6 +40,11 @@ describe('junk paths', () => {
     const res = await get('/en/get-started/index.md')
     expect(res.statusCode).toBe(302)
     expect(res.headers.location).toBe('/en/get-started')
+  })
+
+  test('just _next', async () => {
+    const res = await get('/_next')
+    expect(res.statusCode).toBe(404)
   })
 })
 
